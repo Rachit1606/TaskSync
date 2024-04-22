@@ -1,0 +1,15 @@
+.confirm-email-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.confirm-email-title {
+    margin-bottom: 20px;
+}
+
+.confirm-email-button {
+    margin-top: 20px;
+}

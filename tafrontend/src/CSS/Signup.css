@@ -1,0 +1,38 @@
+.signup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.homeTitle {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.homeDescription {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.form {
+    width: 400px;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.formfield {
+    margin-bottom: 20px;
+}
+
+.formfield-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.signupButton {
+    text-align: center;
+}

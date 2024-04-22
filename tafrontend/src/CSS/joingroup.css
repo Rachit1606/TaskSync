@@ -1,0 +1,48 @@
+.join-group {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    padding-bottom: 4rem;
+  }
+  
+  .back-button {
+    position:absolute;
+    top: 20px;
+    left: 20px;
+  }
+  
+  .join-group h2 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .join-group ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .join-group li {
+    border: 4px solid black;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .join-group li div {
+    flex-grow: 1;
+  }
+  
+  .join-group li div p {
+    margin-top: 10px;
+  }
+  
+  .join-group li button {
+    margin-left: 20px;
+  }
+  

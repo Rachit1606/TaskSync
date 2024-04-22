@@ -1,0 +1,82 @@
+.GroupChat {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    display: flex; 
+    flex-direction: column;
+  }
+  
+  .top-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  .top-left-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .group-details {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .group-actions {
+    margin-top: 10px;
+    text-align: center;
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+  
+  .GroupChat h1 {
+    font-size: 48px;
+    text-align: center;
+  }
+  
+  .GroupChat h2 {
+    font-size: 30px;
+    text-align: center;
+  }
+  
+  .message-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .message-item {
+    border: 4px solid black;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .message-content {
+    flex: 1;
+  }
+  
+  .message-date {
+    font-style: italic;
+    font-size: 12px;
+  }
+  
+  .message-actions {
+    display: flex;
+  }
+  
+  .message-input {
+    margin-top: 2rem;
+    width: 100%;
+    background-color: white;
+    border: 4px solid black;
+  }
+  .send-button {
+    margin-top: 2rem; 
+    align-self: center; 
+  }

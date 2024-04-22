@@ -1,0 +1,255 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cloudformation template for term project backend
+
+Parameters:
+  VpcCIDR:
+    Description: CIDR block for the VPC
+    Type: String
+    Default: 10.0.0.0/19
+  PublicSubnet1CIDR:
+    Description: CIDR block for the first public subnet in us-east1a
+    Type: String
+    Default: 10.0.0.0/22
+  PublicSubnet2CIDR:
+    Description: CIDR block for the second public subnet in us-east1b
+    Type: String
+    Default: 10.0.4.0/22
+  PrivateSubnet1CIDR:
+    Description: CIDR block for the first private subnet in us-east1a
+    Type: String
+    Default: 10.0.8.0/22
+  PrivateSubnet2CIDR:
+    Description: CIDR block for the second private subnet in us-east1b
+    Type: String
+    Default: 10.0.12.0/22
+  PrivateSubnet3CIDR:
+    Description: CIDR block for the third private subnet in us-east1c
+    Type: String
+    Default: 10.0.16.0/22
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  InternetRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnet1CIDR
+      AvailabilityZone: us-east-1a
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnet2CIDR
+      AvailabilityZone: us-east-1b
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PrivateSubnet1CIDR
+      AvailabilityZone: us-east-1a
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      AvailabilityZone: us-east-1b
+
+  PrivateSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PrivateSubnet3CIDR
+      AvailabilityZone: us-east-1c
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  DBSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupDescription: "Subnet group for RDS"
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+        - !Ref PrivateSubnet3
+
+  RDSSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "RDS Security Group"
+      VpcId: !Ref VPC
+
+  RDSSecurityGroupIngress:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref RDSSecurityGroup
+      IpProtocol: tcp
+      FromPort: "3306"
+      ToPort: "3306"
+      SourceSecurityGroupId: !Ref EC2SecurityGroup
+
+  RDSDatabase:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      Engine: "mysql"
+      DBInstanceClass: "db.t3.micro"
+      DBName: "tasksync"
+      MasterUsername: "admin"
+      MasterUserPassword: "admin123"
+      AllocatedStorage: "20"
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref EC2SecurityGroup  
+
+  EC2SecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "EC2 Security Group"
+      VpcId: !Ref VPC
+
+  EC2SecurityGroupIngressSSH:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref EC2SecurityGroup
+      IpProtocol: tcp
+      FromPort: "22"
+      ToPort: "22"
+      CidrIp: "0.0.0.0/0"
+
+  EC2SecurityGroupIngressHTTP:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref EC2SecurityGroup
+      IpProtocol: tcp
+      FromPort: "80"
+      ToPort: "80"
+      CidrIp: "0.0.0.0/0"
+
+  EC2SecurityGroupIngressHTTPS:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref EC2SecurityGroup
+      IpProtocol: tcp
+      FromPort: "443"
+      ToPort: "443"
+      CidrIp: "0.0.0.0/0"
+
+  PublicInstance1:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: "ami-051f8a213df8bc089"
+      KeyName: "ass2-kp"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref EC2SecurityGroup
+          SubnetId: !Ref PublicSubnet1
+
+  PublicInstance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: "ami-051f8a213df8bc089"
+      KeyName: "ass2-kp"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref EC2SecurityGroup
+          SubnetId: !Ref PublicSubnet2
+          
+  ALBSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "ALB Security Group"
+      VpcId: !Ref VPC
+
+  ALBSecurityGroupIngressHTTP:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref ALBSecurityGroup
+      IpProtocol: tcp
+      FromPort: "80"
+      ToPort: "80"
+      CidrIp: "0.0.0.0/0"
+
+  ALBSecurityGroupIngressHTTPS:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref ALBSecurityGroup
+      IpProtocol: tcp
+      FromPort: "443"
+      ToPort: "443"
+      CidrIp: "0.0.0.0/0"
+
+  EC2TargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: "EC2TargetGroup"
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VPC
+
+  ALBListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions:
+        - Type: "forward"
+          TargetGroupArn: !Ref EC2TargetGroup
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  ApplicationLoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: "MyApplicationLoadBalancer"
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups:
+        - !Ref ALBSecurityGroup
+      Scheme: internet-facing
+      Type: application
