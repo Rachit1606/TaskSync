@@ -1,5 +1,6 @@
 package com.termass.backend.Service.Impl;
 
+import com.termass.backend.Entities.GroupMember;
 import com.termass.backend.Entities.TaskGroup;
 import com.termass.backend.Repository.GroupMemberRepository;
 import com.termass.backend.Repository.GroupRepository;
@@ -29,13 +30,10 @@ public class GroupService {
 
 
     public List<TaskGroup> getGroupsByUserId(String userId) {
-        // Fetch list of group IDs associated with the user
-        List<Long> groupIds = groupMemberRepository.findGroupIdsByUserId(userId);
-
-        // Fetch groups corresponding to the group IDs
+        List<GroupMember> groupIds = groupMemberRepository.findByUserId(userId);
         List<TaskGroup> taskGroups = new ArrayList<>();
         if (!groupIds.isEmpty()) {
-            taskGroups = groupRepository.findAllById(groupIds);
+            taskGroups = groupRepository.findAllById(groupIds.stream().map(GroupMember::getGroupId).toList());
         }
 
         return taskGroups;
@@ -46,7 +44,7 @@ public class GroupService {
     }
 
 
-    public TaskGroup getGroupById(Long id) {
+    public TaskGroup getGroupById(String id) {
         return groupRepository.findById(id).orElse(null);
     }
 
@@ -54,7 +52,7 @@ public class GroupService {
         return groupRepository.save(group);
     }
 
-    public void deleteGroup(Long id) {
+    public void deleteGroup(String id) {
         groupRepository.deleteById(id);
     }
 

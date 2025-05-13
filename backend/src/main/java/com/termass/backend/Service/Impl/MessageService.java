@@ -18,11 +18,11 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
-    public List<Message> getMessagesByGroupId(Long groupId) {
+    public List<Message> getMessagesByGroupId(String groupId) {
         return messageRepository.findByGroupId(groupId);
     }
 
-    public Message getMessageById(Long id) {
+    public Message getMessageById(String id) {
         Optional<Message> optionalMessage = messageRepository.findById(id);
         return optionalMessage.orElse(null);
     }
@@ -31,7 +31,7 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
-    public void deleteMessage(Long id) {
+    public void deleteMessage(String id) {
         messageRepository.deleteById(id);
     }
 }

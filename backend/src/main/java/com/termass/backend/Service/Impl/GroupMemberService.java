@@ -5,6 +5,7 @@ import com.termass.backend.Repository.GroupMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,7 +14,7 @@ public class GroupMemberService {
     @Autowired
     private GroupMemberRepository groupMemberRepository;
 
-    public GroupMember joinGroup(Long groupId, String userId) {
+    public GroupMember joinGroup(String groupId, String userId) {
         GroupMember groupMember = new GroupMember();
         groupMember.setGroupId(groupId);
         groupMember.setUserId(userId);
@@ -21,11 +22,15 @@ public class GroupMemberService {
     }
 
 
-    public List<String> getUserIdsByGroupId(Long groupId) {
-        return groupMemberRepository.findUserIdsByGroupId(groupId);
+    public List<String> getUserIdsByGroupId(String groupId) {
+        List<String> userIds = new ArrayList<>();
+        for (GroupMember groupMember : groupMemberRepository.findByGroupId(groupId)) {
+            userIds.add(groupMember.getUserId());
+        }
+        return userIds;
     }
 
-    public void leaveGroup(Long groupId, String userId) {
+    public void leaveGroup(String groupId, String userId) {
         groupMemberRepository.deleteByGroupIdAndUserId(groupId, userId);
     }
 }

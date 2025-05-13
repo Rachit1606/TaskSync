@@ -1,23 +1,47 @@
 package com.termass.backend.Entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Document(collection = "group_members") // You can name the collection as desired
 public class GroupMember {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;  // MongoDB uses String/ObjectId for IDs
 
     private String userId;
+    private String groupId;  // changed from long to String for MongoDB reference
 
-    private long groupId;
+    public GroupMember() {
+    }
+
+    public GroupMember(String id, String userId, String groupId) {
+        this.id = id;
+        this.userId = userId;
+        this.groupId = groupId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
 }

@@ -3,11 +3,9 @@ package com.termass.backend.Controller;
 
 import com.termass.backend.Entities.TaskGroup;
 import com.termass.backend.Entities.GroupMember;
-import com.termass.backend.Entities.Message;
 import com.termass.backend.Service.Impl.GroupMemberService;
 import com.termass.backend.Service.Impl.GroupService;
 import com.termass.backend.Service.Impl.MessageService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +44,7 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/members")
-    public ResponseEntity<List<String>> getUserIdsByGroupId(@PathVariable Long groupId) {
+    public ResponseEntity<List<String>> getUserIdsByGroupId(@PathVariable String groupId) {
         List<String> userIds = groupMemberService.getUserIdsByGroupId(groupId);
         return ResponseEntity.ok(userIds);
     }
@@ -59,7 +57,7 @@ public class GroupController {
     }
 
     @GetMapping("/groups/{id}")
-    public ResponseEntity<TaskGroup> getGroupById(@PathVariable Long id) {
+    public ResponseEntity<TaskGroup> getGroupById(@PathVariable String id) {
         TaskGroup group = groupService.getGroupById(id);
         if (group == null) {
             return ResponseEntity.notFound().build();
@@ -68,7 +66,7 @@ public class GroupController {
     }
 
     @PutMapping("/groups/{id}")
-    public ResponseEntity<TaskGroup> updateGroup(@PathVariable Long id, @RequestBody TaskGroup updatedGroup) {
+    public ResponseEntity<TaskGroup> updateGroup(@PathVariable String id, @RequestBody TaskGroup updatedGroup) {
         TaskGroup existingGroup = groupService.getGroupById(id);
         if (existingGroup == null) {
             return ResponseEntity.notFound().build();
@@ -79,7 +77,7 @@ public class GroupController {
     }
 
     @DeleteMapping("/groups/{id}")
-    public ResponseEntity<Void> deleteGroup(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteGroup(@PathVariable String id) {
         TaskGroup existingGroup = groupService.getGroupById(id);
         if (existingGroup == null) {
             return ResponseEntity.notFound().build();
@@ -88,9 +86,8 @@ public class GroupController {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
     @DeleteMapping("/{groupId}/leave/{userId}")
-    public ResponseEntity<Void> leaveGroup(@PathVariable Long groupId, @PathVariable String userId) {
+    public ResponseEntity<Void> leaveGroup(@PathVariable String groupId, @PathVariable String userId) {
         groupMemberService.leaveGroup(groupId, userId);
         return ResponseEntity.ok().build();
     }

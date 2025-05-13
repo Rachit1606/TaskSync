@@ -16,7 +16,7 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/{groupId}/messages")
-    public ResponseEntity<List<Message>> getMessagesByGroupId(@PathVariable Long groupId) {
+    public ResponseEntity<List<Message>> getMessagesByGroupId(@PathVariable String groupId) {
         List<Message> messages = messageService.getMessagesByGroupId(groupId);
         return ResponseEntity.ok(messages);
     }
@@ -29,7 +29,7 @@ public class MessageController {
 
     // Get message by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Message> getMessageById(@PathVariable Long id) {
+    public ResponseEntity<Message> getMessageById(@PathVariable String id) {
         Message message = messageService.getMessageById(id);
         if (message != null) {
             return ResponseEntity.ok(message);
@@ -40,10 +40,10 @@ public class MessageController {
 
     // Update message
     @PutMapping("/{id}")
-    public ResponseEntity<Message> updateMessage(@PathVariable Long id, @RequestBody Message updatedMessage) {
+    public ResponseEntity<Message> updateMessage(@PathVariable String id, @RequestBody Message updatedMessage) {
         Message message = messageService.getMessageById(id);
         if (message != null) {
-            updatedMessage.setId(id); // Ensure the ID is set to the correct value
+            updatedMessage.setId(String.valueOf(id)); // Ensure the ID is set to the correct value
             message = messageService.updateMessage(updatedMessage);
             return ResponseEntity.ok(message);
         } else {
@@ -53,7 +53,7 @@ public class MessageController {
 
     // Delete message
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMessage(@PathVariable String id) {
         Message message = messageService.getMessageById(id);
         if (message != null) {
             messageService.deleteMessage(id);
