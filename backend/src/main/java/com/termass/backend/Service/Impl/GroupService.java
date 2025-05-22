@@ -22,11 +22,25 @@ public class GroupService {
     @Autowired
     private GroupMemberRepository groupMemberRepository;
 
+    @Autowired
+    private MessageService messageService;
+
     public TaskGroup createGroup(TaskGroup taskGroup) {
+        // Save the group
         TaskGroup createdTaskGroup = groupRepository.save(taskGroup);
-        groupMemberService.joinGroup(createdTaskGroup.getId(), taskGroup.getCreatorId());
+
+        // Add the creator as a group member with ADMIN role
+        GroupMember creatorMember = new GroupMember();
+        creatorMember.setGroupId(createdTaskGroup.getId());
+        creatorMember.setUserId(createdTaskGroup.getCreatorId());
+        creatorMember.setUsername(createdTaskGroup.getCreatorUsername());
+        creatorMember.setRole("ADMIN");
+
+        groupMemberService.joinGroup(creatorMember);
+
         return createdTaskGroup;
     }
+
 
 
     public List<TaskGroup> getGroupsByUserId(String userId) {
@@ -53,6 +67,8 @@ public class GroupService {
     }
 
     public void deleteGroup(String id) {
+        messageService.getMessagesByGroupId(id).forEach(message -> messageService.deleteMessage(message.getId()));
+        groupMemberRepository.findByGroupId(id).forEach(groupMember -> groupMemberService.leaveGroup(id, groupMember.getUserId()));
         groupRepository.deleteById(id);
     }
 

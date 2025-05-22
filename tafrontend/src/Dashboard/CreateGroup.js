@@ -1,7 +1,6 @@
 import { Button, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import userpool from '../userpool';
 import '../CSS/creategroup.css';
 import DEPLOYED_LINK from '../config';
 
@@ -12,8 +11,8 @@ const CreateGroupForm = () => {
 
   const handleCreateGroup = async () => {
     try {
-      const currentUser = userpool.getCurrentUser();
-      const creatorId = currentUser ? currentUser.username : '';
+      const creatorId = sessionStorage.getItem('userId');
+      const creatorUsername = sessionStorage.getItem('username');
 
       const creationDate = Math.floor(Date.now() / 1000);
 
@@ -21,7 +20,8 @@ const CreateGroupForm = () => {
         name: groupName,
         description: groupDescription,
         creationDate: creationDate,
-        creatorId: creatorId
+        creatorId: creatorId,
+        creatorUsername: creatorUsername
       };
 
       const response = await fetch(`${DEPLOYED_LINK}/tasks/createGroup`, {
@@ -33,7 +33,7 @@ const CreateGroupForm = () => {
       });
 
       if (response.ok) {
-        alert("Group Created Successfully")
+        alert("Group Created Successfully");
         Navigate('/dashboard');
       } else {
         console.error('Failed to create group');
@@ -43,34 +43,38 @@ const CreateGroupForm = () => {
     }
   };
 
-  return (
-    <div>
-      <Button variant="contained" onClick={() => Navigate('/dashboard')} className="back-button">
-        Back to Dashboard
-      </Button>
-    <div className="create-group-form">
-      <TextField
-        label="Group Name"
-        value={groupName}
-        onChange={(e) => setGroupName(e.target.value)}
-        variant="outlined"
-        className="text-field"
-      />
-      <TextField
-        label="Group Description"
-        value={groupDescription}
-        onChange={(e) => setGroupDescription(e.target.value)}
-        variant="outlined"
-        multiline
-        rows={4}
-        className="text-field"
-      />
-      <Button variant="contained" onClick={handleCreateGroup} className="create-button">
-        Create Group
-      </Button>
+return (
+  <div className="create-group-page">
+    <Button variant="contained" onClick={() => Navigate('/dashboard')} className="back-button">
+      Back to Dashboard
+    </Button>
+
+    <div className="center-content">
+      <div className="create-group-form">
+        <TextField
+          label="Group Name"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+          variant="outlined"
+          className="text-field"
+        />
+        <TextField
+          label="Group Description"
+          value={groupDescription}
+          onChange={(e) => setGroupDescription(e.target.value)}
+          variant="outlined"
+          multiline
+          rows={4}
+          className="text-field"
+        />
+        <Button variant="contained" onClick={handleCreateGroup} className="create-button">
+          Create Group
+        </Button>
+      </div>
     </div>
-    </div>
-  );
+  </div>
+);
+
 };
 
 export default CreateGroupForm;

@@ -15,43 +15,42 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
+    // Get messages by groupId, with optional filters for status and assignee
     @GetMapping("/{groupId}/messages")
-    public ResponseEntity<List<Message>> getMessagesByGroupId(@PathVariable String groupId) {
-        List<Message> messages = messageService.getMessagesByGroupId(groupId);
+    public ResponseEntity<List<Message>> getFilteredMessages(
+            @PathVariable String groupId,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String assignee) {
+        List<Message> messages = messageService.getMessagesByFilters(groupId, status, assignee);
         return ResponseEntity.ok(messages);
     }
 
+    // Create a new task
     @PostMapping("/createMessage")
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
-        Message createdMessage = messageService.createMessage(message);
-        return ResponseEntity.ok(createdMessage);
+        return ResponseEntity.ok(messageService.createMessage(message));
     }
 
-    // Get message by ID
+    // Get task by ID
     @GetMapping("/{id}")
     public ResponseEntity<Message> getMessageById(@PathVariable String id) {
         Message message = messageService.getMessageById(id);
-        if (message != null) {
-            return ResponseEntity.ok(message);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return (message != null) ? ResponseEntity.ok(message) : ResponseEntity.notFound().build();
     }
 
-    // Update message
+    // Update task
     @PutMapping("/{id}")
     public ResponseEntity<Message> updateMessage(@PathVariable String id, @RequestBody Message updatedMessage) {
-        Message message = messageService.getMessageById(id);
-        if (message != null) {
-            updatedMessage.setId(String.valueOf(id)); // Ensure the ID is set to the correct value
-            message = messageService.updateMessage(updatedMessage);
-            return ResponseEntity.ok(message);
+        Message existingMessage = messageService.getMessageById(id);
+        if (existingMessage != null) {
+            updatedMessage.setId(id);
+            return ResponseEntity.ok(messageService.updateMessage(updatedMessage));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // Delete message
+    // Delete task
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable String id) {
         Message message = messageService.getMessageById(id);

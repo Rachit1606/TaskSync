@@ -1,7 +1,6 @@
 import { Button } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import userpool from '../userpool';
 import { logout } from '../Auth/authenthicate';
 import '../CSS/dashboard.css';
 import DEPLOYED_LINK from '../config';
@@ -9,18 +8,11 @@ import DEPLOYED_LINK from '../config';
 const Dashboard = () => {
   const Navigate = useNavigate();
   const [groups, setGroups] = useState([]);
-  const user = userpool.getCurrentUser();
-  const userId = user ? user.username : '';
 
-  console.log(user);
-  console.log(userId);
-  
-  useEffect(() => {
-    if (userId) {
-      fetchGroups();
-    }
-  }, [userId]); 
+  const userId = sessionStorage.getItem('userId');
+  const username = sessionStorage.getItem('username');
 
+useEffect(() => {
   const fetchGroups = async () => {
     try {
       const response = await fetch(`${DEPLOYED_LINK}/tasks/user/${userId}`);
@@ -35,6 +27,12 @@ const Dashboard = () => {
     }
   };
 
+  if (userId) {
+    fetchGroups();
+  }
+}, [userId]);
+
+
   const handleLogout = () => {
     logout();
   };
@@ -46,39 +44,44 @@ const Dashboard = () => {
   const handleJoinGroup = () => {
     Navigate('/join-group');
   };
-  
+
   const handleOpenGroupChat = (groupId) => {
     Navigate(`/group-chat/${groupId}`);
   };
 
   return (
     <div className='Dashboard'>
-      <h1 className="title">Your Task Groups</h1>
-      <div className="groups-list">
-        {groups.map((group, index) => (
-          <div key={group.id} className="group-tile">
-            <div className="group-info">
-              <p className="group-number">{index + 1}</p>
-              <p>{group.name}</p>
-            </div>
-            <Button variant='contained' onClick={() => handleOpenGroupChat(group.id)}>
-                Open Group
-              </Button>
+    <Button variant="contained" className="logout-button" onClick={handleLogout}>
+      Logout
+    </Button>
+
+    <h1 className="title">Welcome {username?.split('@')[0]}</h1>
+    <h2 className="subtitle">Here are your task groups</h2>
+
+    <div className="groups-list">
+      {groups.map((group, index) => (
+        <div key={group.id} className="group-tile">
+          <div className="group-info">
+            <p className="group-number">{index + 1}</p>
+            <p>{group.name}</p>
           </div>
-        ))}
-      </div>
-      <div className="actions">
-        <Button variant='contained' onClick={handleCreateGroup}>
-          Create Group
-        </Button>
-        <Button variant='contained' onClick={handleJoinGroup}>
-          Join Group
-        </Button>
-        <Button variant='contained' onClick={handleLogout}>
-          Logout
-        </Button>
-      </div>
+          <Button variant='contained' onClick={() => handleOpenGroupChat(group.id)}>
+            Open Group
+          </Button>
+        </div>
+      ))}
     </div>
+
+    <div className="actions">
+      <Button variant='contained' onClick={handleCreateGroup}>
+        Create Group
+      </Button>
+      <Button variant='contained' onClick={handleJoinGroup}>
+        Join Group
+      </Button>
+    </div>
+  </div>
   );
 };
+
 export default Dashboard;

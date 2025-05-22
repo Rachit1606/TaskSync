@@ -12,6 +12,7 @@ public class TaskGroup {
     private String description;
     private Long creationDate;
     private String creatorId;
+    private String creatorUsername;
 
     public String getId() {
         return id;
@@ -62,5 +63,12 @@ public class TaskGroup {
     }
 
     public TaskGroup() {
+    }
+
+    public String getCreatorUsername() {
+        return creatorUsername;
+    }
+    public void setCreatorUsername(String creatorUsername) {
+        this.creatorUsername = creatorUsername;
     }
 }

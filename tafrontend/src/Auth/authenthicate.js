@@ -16,8 +16,29 @@ export const authenticate = (email, password) => {
         user.authenticateUser(authDetails, {
             onSuccess: (result) => {
                 console.log("Login successful");
-                resolve(result);
+
+                // Fetch user attributes
+                user.getUserAttributes((err, attributes) => {
+                    if (err) {
+                        console.error("Failed to get user attributes", err);
+                        reject(err);
+                    } else {
+                        const emailAttr = attributes.find(attr => attr.getName() === 'email');
+                        const subAttr = attributes.find(attr => attr.getName() === 'sub');
+
+                        if (emailAttr && subAttr) {
+                            const userEmail = emailAttr.getValue();
+                            const userId = subAttr.getValue();
+
+                            sessionStorage.setItem('username', userEmail);
+                            sessionStorage.setItem('userId', userId);
+                        }
+
+                        resolve(result);
+                    }
+                });
             },
+
             onFailure: (err) => {
                 console.log("Login failed", err);
                 reject(err);
@@ -50,6 +71,9 @@ export const logout = () => {
     if (user) {
         user.signOut();
     }
-    // Redirect to home or login page
+
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('userId');
+
     window.location.href = '/';
 };

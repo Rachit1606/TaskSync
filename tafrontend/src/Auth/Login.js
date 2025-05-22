@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { authenticate } from './authenthicate';
-import '../CSS/Login.css'; // Import the CSS file
+import '../CSS/Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -68,37 +68,49 @@ const Login = () => {
   };
 
   return (
-    <div>      
-   <Button variant="contained" onClick={() => navigate('/')} className="back-button">
-        Back
+ <div className="login">
+  <div className="form">
+    <Typography variant='h4' className='title'>Login to TaskSync</Typography>
+    <Typography variant='body2' className='description'>
+      Manage your groups and tasks in one place.
+    </Typography>
+
+    <div className="formfield">
+      <TextField
+        fullWidth
+        value={email}
+        onChange={(e) => formInputChange("email", e.target.value)}
+        label="Email"
+        helperText={emailErr}
+      />
+    </div>
+
+    <div className="formfield">
+      <TextField
+        fullWidth
+        value={password}
+        onChange={(e) => formInputChange("password", e.target.value)}
+        type="password"
+        label="Password"
+        helperText={passwordErr}
+      />
+    </div>
+
+    <div className="formfield">
+      <Button fullWidth type='submit' variant='contained' onClick={handleClick}>
+        Login
       </Button>
-    <div className="login">
-    <Typography variant='h3' className='title'>Login to TaskSync</Typography>
-    <div className='form'>
-        <div className="formfield">
-          <TextField
-            value={email}
-            onChange={(e) => formInputChange("email", e.target.value)}
-            label="Email"
-            helperText={emailErr}
-          />
-        </div>
-        <div className='formfield'>
-          <TextField
-            value={password}
-            onChange={(e) => formInputChange("password", e.target.value)}
-            type="password"
-            label="Password"
-            helperText={passwordErr}
-          />
-        </div>
-        <div className='formfield'>
-          <Button type='submit' variant='contained' onClick={handleClick}>Login</Button>
-        </div>
-        <Typography variant="body" className="error">{loginErr}</Typography>
-      </div>
     </div>
-    </div>
+
+    <Typography variant="body2" className="error">{loginErr}</Typography>
+
+    <Typography variant="body2" className="signupRedirect">
+      New user?{' '}
+      <span onClick={() => navigate('/signup')} className="signupLink">Sign up here</span>
+    </Typography>
+  </div>
+</div>
+
   );
 };
 

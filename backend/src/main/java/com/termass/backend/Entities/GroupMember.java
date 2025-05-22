@@ -7,10 +7,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class GroupMember {
 
     @Id
-    private String id;  // MongoDB uses String/ObjectId for IDs
+    private String id;
 
     private String userId;
-    private String groupId;  // changed from long to String for MongoDB reference
+    private String username;
+    private String groupId;
+    private String role;
 
     public GroupMember() {
     }
@@ -43,5 +45,21 @@ public class GroupMember {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

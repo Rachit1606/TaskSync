@@ -1,37 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
-import userpool from '../userpool';
 import DEPLOYED_LINK from '../config';
 
 const EditGroupDialog = ({ open, handleClose, groupId, fetchGroupDetails }) => {
   const [editedGroupName, setEditedGroupName] = useState('');
   const [editedDescription, setEditedDescription] = useState('');
-  const user = userpool.getCurrentUser();
-  const username = user ? user.username : '';
+
+  const userId = sessionStorage.getItem('userId');
+  const username = sessionStorage.getItem('username');
 
   useEffect(() => {
-    // Fetch group details when dialog opens
     if (open && groupId) {
       fetchGroupDetails(groupId);
     }
   }, [open, groupId, fetchGroupDetails]);
 
-  const handleEditGroupNameChange = (event) => {
-    setEditedGroupName(event.target.value);
-  };
-
-  const handleEditDescriptionChange = (event) => {
-    setEditedDescription(event.target.value);
-  };
-
   const handleEditGroup = async () => {
     try {
       const requestData = {
-        name: editedGroupName || null,
-        description: editedDescription || null,
+        name: editedGroupName,
+        description: editedDescription,
         creationDate: Math.floor(Date.now() / 1000),
-        creatorId: username
+        creatorId: userId,
+        creatorUsername: username
       };
 
       const response = await fetch(`${DEPLOYED_LINK}/tasks/groups/${groupId}`, {
@@ -45,7 +36,7 @@ const EditGroupDialog = ({ open, handleClose, groupId, fetchGroupDetails }) => {
       if (response.ok) {
         console.log('Group updated successfully');
         handleClose(); // Close the dialog
-        fetchGroupDetails(groupId); // Fetch updated group details
+        fetchGroupDetails(groupId); // Refresh updated details
       } else {
         console.error('Failed to update group');
       }
@@ -59,14 +50,20 @@ const EditGroupDialog = ({ open, handleClose, groupId, fetchGroupDetails }) => {
       <DialogTitle>Edit Group</DialogTitle>
       <DialogContent>
         <TextField
+          fullWidth
           label="Group Name"
           value={editedGroupName}
-          onChange={handleEditGroupNameChange}
+          onChange={(e) => setEditedGroupName(e.target.value)}
+          margin="dense"
         />
         <TextField
+          fullWidth
           label="Description"
           value={editedDescription}
-          onChange={handleEditDescriptionChange}
+          onChange={(e) => setEditedDescription(e.target.value)}
+          margin="dense"
+          multiline
+          rows={4}
         />
       </DialogContent>
       <DialogActions>

@@ -1,264 +1,252 @@
-import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {
+  Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Select, InputLabel,
+  FormControl, Checkbox, ListItemText, OutlinedInput
+} from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import userpool from '../userpool';
 import '../CSS/groupchat.css';
 import DEPLOYED_LINK from '../config';
-import EditGroupDialog from './EditGroupDialog'; 
+import EditGroupDialog from './EditGroupDialog';
 
 const GroupChat = () => {
   const { groupId } = useParams();
   const navigate = useNavigate();
+ // const username = sessionStorage.getItem('username');
+  const userId = sessionStorage.getItem('userId');
+
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
   const [groupDetails, setGroupDetails] = useState(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editedMessageId, setEditedMessageId] = useState(null);
-  const [editedMessageContent, setEditedMessageContent] = useState('');
-  const user = userpool.getCurrentUser();
-  const username = user ? user.username : '';
+  const [groupMembers, setGroupMembers] = useState([]);
 
-  useEffect(() => {
-    fetchMessages();
-    fetchGroupDetails();
-  }, [groupId]);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [status, setStatus] = useState('ACTIVE');
+  const [startDate, setStartDate] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [assignees, setAssignees] = useState([]);
 
-  const fetchMessages = async () => {
+  const [editGroupOpen, setEditGroupOpen] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
+  const [currentUserRole, setCurrentUserRole] = useState('');
+  const [openTaskDialog, setOpenTaskDialog] = useState(false);
+
+useEffect(() => {
+  const fetchData = async () => {
     try {
-      const response = await fetch(`${DEPLOYED_LINK}/messages/${groupId}/messages`);
-      if (response.ok) {
-        let data = await response.json();
-        data.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
+      const [msgRes, detailRes, memberRes] = await Promise.all([
+        fetch(`${DEPLOYED_LINK}/messages/${groupId}/messages`),
+        fetch(`${DEPLOYED_LINK}/tasks/groups/${groupId}`),
+        fetch(`${DEPLOYED_LINK}/tasks/${groupId}/members`)
+      ]);
+
+      if (msgRes.ok) {
+        const data = await msgRes.json();
         setMessages(data);
-      } else {
-        console.error('Failed to fetch messages');
+      }
+
+      if (detailRes.ok) {
+        const data = await detailRes.json();
+        setGroupDetails(data);
+      }
+
+      if (memberRes.ok) {
+        const data = await memberRes.json();
+        setGroupMembers(data);
+        const currentUser = data.find(m => m.userId === userId);
+        if (currentUser) setCurrentUserRole(currentUser.role);
       }
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error("Error fetching group data:", error);
+    }
+  };
+
+  fetchData();
+}, [groupId, userId]);
+
+  const fetchMessages = async () => {
+    const response = await fetch(`${DEPLOYED_LINK}/messages/${groupId}/messages`);
+    if (response.ok) {
+      const data = await response.json();
+      setMessages(data);
     }
   };
 
   const fetchGroupDetails = async () => {
-    try {
-      const response = await fetch(`${DEPLOYED_LINK}/tasks/groups/${groupId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setGroupDetails(data);
-      } else {
-        console.error('Failed to fetch group details');
-      }
-    } catch (error) {
-      console.error('Error fetching group details:', error);
+    const response = await fetch(`${DEPLOYED_LINK}/tasks/groups/${groupId}`);
+    if (response.ok) {
+      const data = await response.json();
+      setGroupDetails(data);
     }
   };
 
-  const handleMessageChange = (event) => {
-    setNewMessage(event.target.value);
-  };
+  // const fetchGroupMembers = async () => {
+  //   const response = await fetch(`${DEPLOYED_LINK}/tasks/${groupId}/members`);
+  //   if (response.ok) {
+  //     const data = await response.json();
+  //     setGroupMembers(data);
+  //     const currentUser = data.find(m => m.userId === userId);
+  //     if (currentUser) setCurrentUserRole(currentUser.role);
+  //   }
+  // };
 
   const handleSendMessage = async () => {
-    try {
-      const requestData = {
-        content: newMessage,
-        groupId: groupId,
-        creatorId: username,
-        creationDate: Math.floor(Date.now() / 1000)
-      };
+    const selectedUsernames = groupMembers
+      .filter(member => assignees.includes(member.userId))
+      .map(member => member.username);
 
-      const response = await fetch(`${DEPLOYED_LINK}/messages/createMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-      });
+    const messageData = {
+      title,
+      description,
+      groupId,
+      creatorId: userId,
+      creationDate: new Date().toISOString().split('T')[0],
+      status,
+      assignees: selectedUsernames,
+      startDate,
+      dueDate
+    };
 
-      if (response.ok) {
-        alert('Task added successfully');
-        fetchMessages();
-        setNewMessage('');
-      } else {
-        alert('Failed to create Task');
-      }
-    } catch (error) {
-      console.error('Error Creating Task:', error);
+    const response = await fetch(`${DEPLOYED_LINK}/messages/createMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(messageData)
+    });
+
+    if (response.ok) {
+      alert('Task created');
+      fetchMessages();
+      setTitle('');
+      setDescription('');
+      setStatus('ACTIVE');
+      setStartDate('');
+      setDueDate('');
+      setAssignees([]);
     }
-  };
-
-  const handleLeaveGroup = async () => {
-    try {
-      const response = await fetch(`${DEPLOYED_LINK}/tasks/${groupId}/leave/${username}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
-        alert('Left the Task group successfully');
-        navigate('/dashboard'); 
-      } else {
-        alert('Failed to leave the group');
-      }
-    } catch (error) {
-      alert('Error leaving the group:', error);
-    }
-  };
-
-  const handleBackToDashboard = () => {
-    navigate('/dashboard');
-  };
-
-  const handleOpenEditDialog = (messageId, content) => {
-    setEditedMessageId(messageId);
-    setEditedMessageContent(content);
-    setEditDialogOpen(true);
-  };
-
-  const handleCloseEditDialog = () => {
-    setEditedMessageId(null);
-    setEditedMessageContent('');
-    setEditDialogOpen(false);
-  };
-
-  const handleEditMessage = async () => {
-    try {
-      const requestData = {
-        content: editedMessageContent,
-        groupId: groupId,
-        creatorId: username,
-        creationDate: Math.floor(Date.now() / 1000)
-      };
-
-      const response = await fetch(`${DEPLOYED_LINK}/messages/${editedMessageId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-      });
-
-      if (response.ok) {
-        alert('Task updated successfully');
-        handleCloseEditDialog();
-        fetchMessages();
-      } else {
-        alert('Failed to update Task');
-      }
-    } catch (error) {
-      console.error('Error updating message:', error);
-    }
-  };
-
-  const handleDeleteMessage = async (messageId) => {
-    try {
-      const response = await fetch(`${DEPLOYED_LINK}/messages/${messageId}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
-        alert('Task deleted successfully');
-        fetchMessages();
-      } else {
-        alert('Failed to delete the Task');
-      }
-    } catch (error) {
-      console.error('Error deleting the message:', error);
-    }
-  };
-
-  const handleOpenEditGroupDialog = () => {
-    console.log('Open Edit Group Dialog');
   };
 
   const handleDeleteGroup = async () => {
-    try {
+    if (window.confirm('Are you sure you want to delete this group?')) {
       const response = await fetch(`${DEPLOYED_LINK}/tasks/groups/${groupId}`, {
         method: 'DELETE'
       });
       if (response.ok) {
         alert('Group deleted successfully');
         navigate('/dashboard');
-      } else {
-        alert('Failed to delete the group');
       }
-    } catch (error) {
-      console.error('Error deleting the group:', error);
     }
   };
 
- return (
-  <div>
-        <Button variant='contained' onClick={handleBackToDashboard}>
-      Back to Dashboard
-    </Button>
-  <div className="top-buttons">
-    <Button variant='contained' onClick={handleLeaveGroup}>
-      Leave Group
-    </Button>
-  </div>
-  <div className='GroupChat'>
-  
-  <h1>Tasks List</h1>
-  <h2>Task Group Details</h2>
-  {groupDetails && (
-    <div className="group-details">
-      <p>Name: {groupDetails.name}</p>
-      <p>Description: {groupDetails.description}</p>
-      <p>Date Created: {new Date(groupDetails.creationDate*1000).toLocaleString()}</p>
-      {groupDetails && groupDetails.creatorId === username && (
-    <div className="group-actions">
-      <Button variant='contained' onClick={handleOpenEditGroupDialog}>
-        Edit Group
+  const handleLeaveGroup = async () => {
+    if (window.confirm('Are you sure you want to leave this group?')) {
+      const response = await fetch(`${DEPLOYED_LINK}/tasks/${groupId}/leave/${userId}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        alert('Left the group successfully');
+        navigate('/dashboard');
+      }
+    }
+  };
+
+  return (
+    <div className="GroupChat">
+      <Button
+        variant="contained"
+        onClick={() => navigate('/dashboard')}
+        className="back-button"
+      >
+        Back to Dashboard
       </Button>
-      <Button variant='contained' onClick={handleDeleteGroup}>
-        Delete Group
-      </Button>
-    </div>
-  )}
-    </div>
-  )}
-    <TextField
-    label="Type your Task"
-    value={newMessage}
-    onChange={handleMessageChange}
-    className="message-input"
-  />
-<Button variant='contained' onClick={handleSendMessage} className="send-button">
-  Send
-</Button>
-  <ul className="message-list">
-    {messages.map(message => (
-      <li key={message.id} className="message-item">
-        <div className="message-content">
-          <p>{message.content}</p>
-          <p className="message-date">Date: {new Date(message.creationDate *1000).toLocaleString()}</p>
-        </div>
-        {message.creatorId === username && (
-          <div className="message-actions">
-            <Button variant='outlined' onClick={() => handleOpenEditDialog(message.id, message.content)}>
-              Edit
-            </Button>
-            <Button variant='outlined' onClick={() => handleDeleteMessage(message.id)}>
-              Delete
-            </Button>
-          </div>
+      <h1>Task Group: {groupDetails?.name}</h1>
+
+      <div className="group-actions">
+        <Button variant='contained' onClick={() => setEditGroupOpen(true)}>Edit Group</Button>
+        <Button variant='outlined' onClick={() => setShowMembers(!showMembers)}>Show Members</Button>
+        {currentUserRole === 'ADMIN' && (
+          <Button variant='contained' color='error' onClick={handleDeleteGroup}>Delete Group</Button>
         )}
-      </li>
-    ))}
-  </ul>
-  <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
-    <DialogTitle>Edit Message</DialogTitle>
-    <DialogContent>
-      <TextField
-        label="Message Content"
-        value={editedMessageContent}
-        onChange={(event) => setEditedMessageContent(event.target.value)}
+        {currentUserRole === 'MEMBER' && (
+          <Button variant='contained' color='warning' onClick={handleLeaveGroup}>Leave Group</Button>
+        )}
+      </div>
+
+      {showMembers && (
+        <div className="member-list">
+          <h3>Group Members</h3>
+          <ul>
+            {groupMembers.map((member) => (
+              <li key={member.userId}>{member.username} ({member.role})</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <ul className="message-list">
+        {messages.map(task => (
+          <li key={task.id} className="message-item">
+            <div className="message-content">
+              <p><strong>{task.title}</strong></p>
+              <p>{task.description}</p>
+              <p>Status: {task.status}</p>
+              <p>Assignees: {task.assignees?.join(', ')}</p>
+              <p>Start: {task.startDate}</p>
+              <p>Due: {task.dueDate}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <Button className="fab" onClick={() => setOpenTaskDialog(true)}>+</Button>
+
+      <Dialog open={openTaskDialog} onClose={() => setOpenTaskDialog(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Create New Task</DialogTitle>
+        <DialogContent dividers>
+          <TextField label="Title" fullWidth value={title} onChange={e => setTitle(e.target.value)} className="text-field" />
+          <TextField label="Description" fullWidth multiline rows={3} value={description} onChange={e => setDescription(e.target.value)} className="text-field" />
+          <FormControl fullWidth className="text-field">
+            <InputLabel>Status</InputLabel>
+            <Select value={status} onChange={e => setStatus(e.target.value)}>
+              <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+              <MenuItem value="COMPLETED">COMPLETED</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField label="Start Date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} InputLabelProps={{ shrink: true }} fullWidth className="text-field" />
+          <TextField label="Due Date" type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} InputLabelProps={{ shrink: true }} fullWidth className="text-field" />
+          <FormControl fullWidth className="text-field">
+            <InputLabel>Assignees</InputLabel>
+            <Select
+              multiple
+              value={assignees}
+              onChange={e => setAssignees(e.target.value)}
+              input={<OutlinedInput />}
+              renderValue={(selected) =>
+                groupMembers.filter(m => selected.includes(m.userId)).map(m => m.username).join(', ')
+              }
+            >
+              {groupMembers.map(member => (
+                <MenuItem key={member.userId} value={member.userId}>
+                  <Checkbox checked={assignees.includes(member.userId)} />
+                  <ListItemText primary={member.username} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenTaskDialog(false)}>Cancel</Button>
+          <Button variant="contained" onClick={() => { handleSendMessage(); setOpenTaskDialog(false); }}>
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <EditGroupDialog
+        open={editGroupOpen}
+        handleClose={() => setEditGroupOpen(false)}
+        groupId={groupId}
+        fetchGroupDetails={fetchGroupDetails}
       />
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={handleCloseEditDialog}>Cancel</Button>
-      <Button onClick={handleEditMessage}>Save</Button>
-    </DialogActions>
-  </Dialog>
-</div>
-    
-</div>
+    </div>
   );
 };
 

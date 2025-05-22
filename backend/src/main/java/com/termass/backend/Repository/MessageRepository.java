@@ -9,4 +9,7 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends MongoRepository<Message, String> {
     List<Message> findByGroupId(String groupId);
+    List<Message> findByGroupIdAndStatus(String groupId, String status);
+    List<Message> findByGroupIdAndAssigneesContaining(String groupId, String assignee);
+    List<Message> findByGroupIdAndStatusAndAssigneesContaining(String groupId, String status, String assignee);
 }

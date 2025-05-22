@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, TextField, Typography, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import userpool from '../userpool';
 import '../CSS/Signup.css'; // Import the CSS file
 
 const Signup = () => {
-    const navigate = useNavigate(); // Import useNavigate hook
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -94,54 +94,70 @@ const Signup = () => {
     };
 
     return (
-        <div>
-               <Button variant="contained" onClick={() => navigate('/')} className="back-button">
-        Back
-      </Button>
         <div className="signup">
-            <Typography variant='h3' className='homeTitle'>Welcome to TaskSync</Typography>
-            <Typography variant='body1' className='homeDescription'>TaskSync is a collaborative task management platform</Typography>
-            <div className='form'>
+            <div className="form">
+                <Typography variant='h4' className='homeTitle'>Create your TaskSync account</Typography>
+                <Typography variant='body2' className='homeDescription'>
+                    Organize your tasks and collaborate easily.
+                </Typography>
+
                 <div className="formfield-row">
                     <div className="formfield">
                         <TextField
+                            fullWidth
                             value={name}
                             onChange={(e) => formInputChange("name", e.target.value)}
-                            label="Name"
+                            label="Full Name"
                         />
                     </div>
                     <div className="formfield">
                         <TextField
+                            fullWidth
+                            select
+                            label="Gender"
                             value={gender}
                             onChange={(e) => formInputChange("gender", e.target.value)}
-                            label="Gender"
-                        />
+                        >
+                            <MenuItem value="Male">Male</MenuItem>
+                            <MenuItem value="Female">Female</MenuItem>
+                            <MenuItem value="Other">Other</MenuItem>
+                        </TextField>
+
                     </div>
                 </div>
-                <div className="formfield-row">
-                    <div className="formfield">
-                        <TextField
-                            value={email}
-                            onChange={(e) => formInputChange("email", e.target.value)}
-                            label="Email"
-                            helperText={emailErr}
-                        />
-                    </div>
-                    <div className="formfield">
-                        <TextField
-                            value={password}
-                            onChange={(e) => { formInputChange("password", e.target.value) }}
-                            type="password"
-                            label="Password"
-                            helperText={passwordErr}
-                        />
-                    </div>
+
+                <div className="formfield">
+                    <TextField
+                        fullWidth
+                        value={email}
+                        onChange={(e) => formInputChange("email", e.target.value)}
+                        label="Email"
+                        helperText={emailErr}
+                    />
                 </div>
+
+                <div className="formfield">
+                    <TextField
+                        fullWidth
+                        value={password}
+                        onChange={(e) => formInputChange("password", e.target.value)}
+                        type="password"
+                        label="Password"
+                        helperText={passwordErr}
+                    />
+                </div>
+
                 <div className='formfield signupButton'>
-                    <Button type='submit' variant='contained' onClick={handleClick}>Signup</Button>
+                    <Button fullWidth type='submit' variant='contained' onClick={handleClick}>
+                        Sign Up
+                    </Button>
                 </div>
+
+                <Typography variant="body2" className="loginRedirect">
+                    Already have an account?{' '}
+                    <span onClick={() => navigate('/login')} className="loginLink">Log in</span>
+                </Typography>
             </div>
-        </div>
         </div>
     );
 };

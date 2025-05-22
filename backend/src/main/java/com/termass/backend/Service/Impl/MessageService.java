@@ -22,17 +22,27 @@ public class MessageService {
         return messageRepository.findByGroupId(groupId);
     }
 
-    public Message getMessageById(String id) {
-        Optional<Message> optionalMessage = messageRepository.findById(id);
-        return optionalMessage.orElse(null);
+    public List<Message> getMessagesByFilters(String groupId, String status, String assignee) {
+        if (status != null && assignee != null) {
+            return messageRepository.findByGroupIdAndStatusAndAssigneesContaining(groupId, status, assignee);
+        } else if (status != null) {
+            return messageRepository.findByGroupIdAndStatus(groupId, status);
+        } else if (assignee != null) {
+            return messageRepository.findByGroupIdAndAssigneesContaining(groupId, assignee);
+        } else {
+            return messageRepository.findByGroupId(groupId);
+        }
     }
 
-    public Message updateMessage(Message message) {
-        return messageRepository.save(message);
+    public Message getMessageById(String id) {
+        return messageRepository.findById(id).orElse(null);
+    }
+
+    public Message updateMessage(Message updatedMessage) {
+        return messageRepository.save(updatedMessage);
     }
 
     public void deleteMessage(String id) {
         messageRepository.deleteById(id);
     }
 }
-

@@ -14,20 +14,13 @@ public class GroupMemberService {
     @Autowired
     private GroupMemberRepository groupMemberRepository;
 
-    public GroupMember joinGroup(String groupId, String userId) {
-        GroupMember groupMember = new GroupMember();
-        groupMember.setGroupId(groupId);
-        groupMember.setUserId(userId);
+    public GroupMember joinGroup(GroupMember groupMember) {
         return groupMemberRepository.save(groupMember);
     }
 
 
-    public List<String> getUserIdsByGroupId(String groupId) {
-        List<String> userIds = new ArrayList<>();
-        for (GroupMember groupMember : groupMemberRepository.findByGroupId(groupId)) {
-            userIds.add(groupMember.getUserId());
-        }
-        return userIds;
+    public List<GroupMember> getGroupMembersByGroupId(String groupId) {
+        return groupMemberRepository.findByGroupId(groupId);
     }
 
     public void leaveGroup(String groupId, String userId) {

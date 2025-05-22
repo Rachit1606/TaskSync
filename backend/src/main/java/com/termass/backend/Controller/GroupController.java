@@ -1,6 +1,4 @@
 package com.termass.backend.Controller;
-
-
 import com.termass.backend.Entities.TaskGroup;
 import com.termass.backend.Entities.GroupMember;
 import com.termass.backend.Service.Impl.GroupMemberService;
@@ -32,8 +30,8 @@ public class GroupController {
     }
 
     @PostMapping("/joinGroup")
-    public ResponseEntity<GroupMember> joinGroup( @RequestBody GroupMember groupMember) {
-        GroupMember joinedMember = groupMemberService.joinGroup(groupMember.getGroupId(), groupMember.getUserId());
+    public ResponseEntity<GroupMember> joinGroup(@RequestBody GroupMember groupMember) {
+        GroupMember joinedMember = groupMemberService.joinGroup(groupMember);
         return ResponseEntity.ok(joinedMember);
     }
 
@@ -44,8 +42,8 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}/members")
-    public ResponseEntity<List<String>> getUserIdsByGroupId(@PathVariable String groupId) {
-        List<String> userIds = groupMemberService.getUserIdsByGroupId(groupId);
+    public ResponseEntity<List<GroupMember>> getGroupMembersByGroupId(@PathVariable String groupId) {
+        List<GroupMember> userIds = groupMemberService.getGroupMembersByGroupId(groupId);
         return ResponseEntity.ok(userIds);
     }
 
