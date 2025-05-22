@@ -1,6 +1,6 @@
 # TaskSync – Collaborative Task Management App
 
-**TaskSync** is a collaborative task management platform built with **React**, **Material UI**, and **Java Spring Boot (REST API)**. It allows users to create and join groups, manage tasks, assign roles, and collaborate in real time.
+**TaskSync** is a collaborative task management platform built with **React**, **Material UI**, **MongoDB** and **Java Spring Boot (REST API)**. It allows users to create and join groups, manage tasks, assign roles, and collaborate in real time.
 
 ---
 
