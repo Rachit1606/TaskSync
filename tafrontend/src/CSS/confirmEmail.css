@@ -1,15 +1,30 @@
 .confirm-email-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom right, #e3f2fd, #fce4ec);
+  min-height: 100vh;
+  padding: 13rem 9rem;
+  box-sizing: border-box;
 }
 
 .confirm-email-title {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+  color: #1a237e;
 }
 
 .confirm-email-button {
-    margin-top: 20px;
+  background-color: #1a237e !important;
+  color: white !important;
+  width: fit-content;
+  align-self: center;
+  justify-self: center;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-email-button:hover {
+  background-color: #3949ab !important;
 }

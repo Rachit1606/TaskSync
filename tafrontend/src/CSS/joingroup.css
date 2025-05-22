@@ -1,48 +1,97 @@
+.join-group-page {
+  position: relative;
+  min-height: 80vh;
+  background: linear-gradient(to bottom right, #e3f2fd, #fce4ec);
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+
+.center-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
 .join-group {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    position: relative;
-    padding-bottom: 4rem;
+  width: 100%;
+  max-width: 700px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);
+  padding: 32px 28px;
+}
+
+.join-group h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  color: #1a237e;
+  margin-bottom: 24px;
+}
+
+.join-group ul {
+  list-style: none;
+  padding: 0;
+}
+
+.join-group li {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.join-group li:hover {
+  transform: translateY(-2px);
+}
+
+.join-group li div {
+  flex-grow: 1;
+}
+
+.join-group li div p {
+  margin-top: 10px;
+}
+
+.join-group li button {
+  margin-left: 20px;
+  background-color: #1a237e;
+}
+
+.join-group li button:hover {
+  background-color: #3949ab;
+}
+
+@media screen and (max-width: 480px) {
+  .join-group {
+    padding: 24px 20px;
   }
-  
-  .back-button {
-    position:absolute;
-    top: 20px;
-    left: 20px;
-  }
-  
-  .join-group h2 {
-    font-size: 48px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .join-group ul {
-    list-style: none;
-    padding: 0;
-  }
-  
+
   .join-group li {
-    border: 4px solid black;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .join-group li div {
-    flex-grow: 1;
-  }
-  
-  .join-group li div p {
-    margin-top: 10px;
-  }
-  
+
   .join-group li button {
-    margin-left: 20px;
+    margin: 10px 0 0 0;
+    width: 100%;
   }
-  
+
+  .back-button {
+    top: 10px;
+    left: 10px;
+  }
+}

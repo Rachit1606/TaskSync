@@ -1,35 +1,70 @@
 .login {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column; 
-    height: 100vh;
-  }
-  .back-button {
-    position: relative;
-    top: 20px;
-    left: 20px;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom right, #e3f2fd, #fce4ec);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.form {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 28px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.title {
+  margin-bottom: 12px;
+  text-align: center;
+  font-weight: 700;
+  color: #1a237e;
+  font-size: 1.8rem;
+}
+
+.description {
+  margin-bottom: 24px;
+  text-align: center;
+  color: #5c6bc0;
+  font-size: 1rem;
+}
+
+.formfield {
+  margin-bottom: 16px;
+}
+
+.signupRedirect {
+  text-align: center;
+  margin-top: 24px;
+  color: #555;
+}
+
+.signupLink {
+  color: #1e88e5;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* Responsive */
+@media screen and (max-width: 480px) {
   .form {
-    width: 400px;
-    padding: 20px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    text-align: center;
+    padding: 24px 20px;
+    border-radius: 12px;
   }
-  
+
   .title {
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
+    font-size: 1.5rem;
   }
-  
-  .formfield {
-    margin-bottom: 20px;
-  }
-  
-  .error {
-    color: red;
-  }
-  
+}

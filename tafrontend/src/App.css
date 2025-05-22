@@ -7,18 +7,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 40px;
 }
 
 .signup {
-  margin: 50px;
   align-items: center;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  width: 40%;
+  width: 50%;
 }
 
 .formfield {
@@ -26,12 +24,6 @@
 }
 
 .login {
-  margin: 50px;
   align-items: center;
   justify-content: center;
-}
-
-.Dashboard{
-  margin:5em;
-  align-items: center;
 }
