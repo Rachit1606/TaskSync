@@ -86,13 +86,13 @@ loadScripts(document, 'script');</script>
 <h1 title="Class MessageController" class="title">Class MessageController</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">com.termass.backend.Controller.MessageController</div>
+<div class="inheritance">com.termass.backend.Controller.TaskController</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="annotations">@RestController
-@RequestMapping("/messages")
+@RequestMapping("/tasks")
 </span><span class="modifiers">public class </span><span class="element-name type-name-label">MessageController</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 </div>
@@ -124,7 +124,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.springframework.http.ResponseEntity<wbr>&lt;<a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createMessage(com.termass.backend.Entities.Message)" class="member-name-link">createMessage</a><wbr>(<a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;message)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createMessage(com.termass.backend.Entities.Message)" class="member-name-link">createMessage</a><wbr>(<a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;task)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.springframework.http.ResponseEntity<wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deleteMessage(java.lang.String)" class="member-name-link">deleteMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
@@ -137,7 +137,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.springframework.http.ResponseEntity<wbr>&lt;<a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateMessage(java.lang.String,com.termass.backend.Entities.Message)" class="member-name-link">updateMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
- <a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;updatedMessage)</code></div>
+ <a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;updatedTask)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -176,7 +176,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getMessagesByGroupId(java.lang.String)">
 <h3>getMessagesByGroupId</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="annotations">@GetMapping("/{groupId}/messages")
+<div class="member-signature"><span class="annotations">@GetMapping("/{groupId}/tasks")
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.springframework.http.ResponseEntity&lt;<a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&gt;&gt;</span>&nbsp;<span class="element-name">getMessagesByGroupId</span><wbr><span class="parameters">(@PathVariable
  <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;groupId)</span></div>
 </div>
@@ -188,7 +188,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@PostMapping("/createMessage")
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.springframework.http.ResponseEntity&lt;<a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&gt;</span>&nbsp;<span class="element-name">createMessage</span><wbr><span class="parameters">(@RequestBody
- <a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;message)</span></div>
+ <a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;task)</span></div>
 </div>
 </section>
 </li>
@@ -210,7 +210,7 @@ loadScripts(document, 'script');</script>
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">org.springframework.http.ResponseEntity&lt;<a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&gt;</span>&nbsp;<span class="element-name">updateMessage</span><wbr><span class="parameters">(@PathVariable
  <a href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id,
  @RequestBody
- <a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;updatedMessage)</span></div>
+ <a href="../Entities/Message.html" title="class in com.termass.backend.Entities">Message</a>&nbsp;updatedTask)</span></div>
 </div>
 </section>
 </li>
