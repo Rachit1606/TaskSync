@@ -1,0 +1,6 @@
+com.termass.backend
+com.termass.backend.Config
+com.termass.backend.Controller
+com.termass.backend.Entities
+com.termass.backend.Repository
+com.termass.backend.Service.Impl
